@@ -118,7 +118,7 @@ export const topics: Topic[] = [
             {
                 id: 'rl-1',
                 title: 'Soon!',
-                content: `Walking Robot`,
+                content: `Walking Robot<br/><img src="https://gymnasium.farama.org/_static/videos/mujoco/ant.gif" style="width:100%; margin-top: 20px; border-radius: 10px;" />`,
                 config: { animationType: 'grid', color: '#4B286D', speed: 0.5 }
             }
         ]

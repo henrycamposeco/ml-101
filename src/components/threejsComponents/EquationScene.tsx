@@ -8,7 +8,7 @@ interface Props {
     speed?: number;
 }
 
-export function EquationScene({ color = '#4B286D' }: Props) {
+export function EquationScene({ }: Props) {
     const mountRef = useRef<HTMLDivElement>(null);
     const sceneRef = useRef<THREE.Scene | null>(null);
     const rendererRef = useRef<THREE.WebGLRenderer | null>(null);

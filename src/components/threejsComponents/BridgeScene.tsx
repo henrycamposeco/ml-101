@@ -127,7 +127,7 @@ export function BridgeScene({ color = '#66CC00', speed = 1 }: { color?: string, 
 
             let neuronPositions: THREE.Vector3[] = [];
 
-            particles.forEach((p, i) => {
+            particles.forEach((p) => {
                 // Move forward
                 p.mesh.position.x += p.speed * speed;
 
