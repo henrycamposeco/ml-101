@@ -1,0 +1,178 @@
+:root {
+  /* Telus Colors */
+  --telus-purple: #4B286D;
+  --telus-green: #66CC00;
+  --telus-white: #FFFFFF;
+
+  /* Semantic Mappings */
+  --color-primary: var(--telus-purple);
+  --color-secondary: var(--telus-green);
+  --color-accent: var(--telus-green);
+
+  /* Backgrounds - Light Theme */
+  --color-bg-deep: #f4f4f4;
+  /* Light grey for contrast areas */
+  --color-bg: var(--telus-white);
+  --color-bg-dark: #f9f9f9;
+
+  /* Surfaces */
+  --color-surface: rgba(255, 255, 255, 0.85);
+  --color-surface-hover: #ffffff;
+
+  /* Text */
+  --color-text-primary: var(--telus-purple);
+  --color-text-secondary: #2d3436;
+  /* Dark grey for readability */
+  --color-text-inverse: #ffffff;
+
+  /* Typography */
+  --font-heading: 'Outfit', 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+
+  /* Spacing */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
+
+  /* Shadows - More subtle for light theme */
+  --shadow-sm: 0 4px 6px rgba(75, 40, 109, 0.05);
+  /* Tinted with purple */
+  --shadow-md: 0 10px 15px -3px rgba(75, 40, 109, 0.1);
+  --shadow-lg: 0 20px 25px -5px rgba(75, 40, 109, 0.15);
+  --shadow-glow: 0 0 20px rgba(102, 204, 0, 0.4);
+  /* Green glow */
+
+  /* Transitions */
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+  /* Subtle background gradient to make glassmorphism visible */
+  background-image:
+    radial-gradient(circle at 10% 10%, rgba(102, 204, 0, 0.1) 0%, transparent 40%),
+    radial-gradient(circle at 90% 90%, rgba(75, 40, 109, 0.1) 0%, transparent 40%);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  overflow: hidden;
+  height: 100vh;
+}
+
+#app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1.2;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn var(--transition-normal) forwards;
+}
+
+/* Glassmorphism Utilities - Adapted for Light Theme */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+}
+
+.glass-card {
+  /* Note: standard CSS doesn't support @extend, need to manually duplicate */
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(75, 40, 109, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(102, 204, 0, 0.5);
+  /* Green border on hover */
+}
+
+/* Grid Layouts */
+.grid-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+  height: 100%;
+}
+
+@media (min-width: 768px) {
+  .grid-layout {
+    grid-template-columns: 40% 60%;
+  }
+}
