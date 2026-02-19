@@ -21,8 +21,7 @@ This project is a custom-built presentation tool that moves beyond static slides
     *   The "Hello World" of ML.
     *   Visualizing `y = wx + b`.
     *   Understanding the Cost Function and Gradient Descent.
-3.  **Neural Networks**: (In Progress) Understanding neurons, layers, and backpropagation.
-4.  **Generative AI**: (In Progress) VAEs, GANs, and Transformers.
+3.  **Reinforcement Learning**: (In Progress)
 
 ## 🛠️ Installation & Running
 
