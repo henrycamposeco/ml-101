@@ -12,9 +12,9 @@ export function LinearRegressionScene({ color = '#4B286D' }: Props) {
     const mountRef = useRef<HTMLDivElement>(null);
 
     // State
-    const [slope, setSlope] = useState(1);
-    const [intercept, setIntercept] = useState(0);
-    const [showLine, setShowLine] = useState(true);
+    const [slope, setSlope] = useState(1.5);
+    const [intercept, setIntercept] = useState(0.5);
+    const [showLine, setShowLine] = useState(false);
     const [showErrors, setShowErrors] = useState(false);
     const [showPoints, setShowPoints] = useState(true);
     const [showOverfitting, setShowOverfitting] = useState(false);
@@ -35,9 +35,11 @@ export function LinearRegressionScene({ color = '#4B286D' }: Props) {
     // Generate data once
     const dataPoints = useMemo(() => {
         const points: { x: number; y: number }[] = [];
-        for (let i = -5; i <= 5; i += 1) {
-            const noise = (Math.random() - 0.5) * 3;
-            points.push({ x: i, y: i + noise });
+        // Generate positive data for "Server Load" (x) vs "Response Time" (y) -> Positive Quadrant
+        for (let i = 0; i <= 10; i += 1) {
+            const noise = (Math.random() - 0.5) * 5;
+            // y = 1.5x + 2 + noise
+            points.push({ x: i, y: i * 1.5 + 2 + noise });
         }
         return points;
     }, []);
@@ -51,11 +53,13 @@ export function LinearRegressionScene({ color = '#4B286D' }: Props) {
         scene.background = new THREE.Color(0xffffff);
         sceneRef.current = scene;
 
+        const scaleY = 0.5; // Scale Y visually to fix "too tall" look
+
         // Camera
         const camera = new THREE.PerspectiveCamera(50, mountRef.current.clientWidth / mountRef.current.clientHeight, 0.1, 100);
-        camera.position.set(0, 0, 15);
-        // Shift camera left so the graph appears to the right
-        camera.position.x = -3;
+        // Center view around data center ~ (10, 5) (since Y is scaled by 0.5)
+        camera.position.set(5, 5, 18);
+        camera.lookAt(10, 5, 0);
         cameraRef.current = camera;
 
         // Renderer
@@ -69,21 +73,89 @@ export function LinearRegressionScene({ color = '#4B286D' }: Props) {
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.enableZoom = false;
+        // MUST set target to match lookAt, otherwise it snaps to (0,0,0)
+        controls.target.set(4, 5, 0); // Center Y is now ~5 
+        controls.update();
         controlsRef.current = controls;
 
         // Axes & Grid
-        const axesHelper = new THREE.AxesHelper(6);
-        scene.add(axesHelper);
-        const grid = new THREE.GridHelper(12, 12, 0x888888, 0xefefef);
-        grid.rotation.x = Math.PI / 2;
-        scene.add(grid);
+
+
+        // Custom X and Y Axis Lines (Black Arrows)
+        const axisMaterial = new THREE.LineBasicMaterial({ color: 0xbbbccc, linewidth: 2 });
+
+        // X Base Line
+        const xPoints = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(12, 0, 0)];
+        const xGeometry = new THREE.BufferGeometry().setFromPoints(xPoints);
+        const xAxisLine = new THREE.Line(xGeometry, axisMaterial);
+        scene.add(xAxisLine);
+
+        // Y Base Line
+        const yPoints = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 20 * scaleY, 0)];
+        const yGeometry = new THREE.BufferGeometry().setFromPoints(yPoints);
+        const yAxisLine = new THREE.Line(yGeometry, axisMaterial);
+        scene.add(yAxisLine);
+
+        // Create Labels
+        const createLabel = (text: string, position: THREE.Vector3, color: string = '#000000', size: number = 1.0) => {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            if (context) {
+                // High resolution canvas
+                canvas.width = 512;
+                canvas.height = 128;
+                context.font = 'Bold 48px Arial';
+                context.fillStyle = color;
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                context.fillText(text, 256, 64);
+            }
+            const texture = new THREE.CanvasTexture(canvas);
+            const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
+            const sprite = new THREE.Sprite(material);
+            sprite.position.copy(position);
+            sprite.scale.set(size * 4, size, 1); // Adjust aspect ratio
+            return sprite;
+        };
+
+        const xLabel = createLabel('Server Load %', new THREE.Vector3(6, -1.5, 0), '#4B286D');
+        scene.add(xLabel);
+
+
+
+        const createRotatedLabel = (text: string, position: THREE.Vector3, color: string = '#000000', size: number = 1.0) => {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            if (context) {
+                canvas.width = 128;
+                canvas.height = 512; // Tall canvas
+                context.font = 'Bold 48px Arial';
+                context.fillStyle = color;
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+
+                // Rotate context
+                context.translate(64, 256);
+                context.rotate(-Math.PI / 2);
+                context.fillText(text, 0, 0);
+            }
+            const texture = new THREE.CanvasTexture(canvas);
+            const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
+            const sprite = new THREE.Sprite(material);
+            sprite.position.copy(position);
+            sprite.scale.set(size, size * 4, 1);
+            return sprite;
+        };
+
+        const yLabelRotated = createRotatedLabel('Response time (ms)', new THREE.Vector3(-2, 10 * scaleY, 0), '#4B286D');
+        scene.add(yLabelRotated);
 
         // Points (Geometry constant, visibility toggles)
         const pointsGeometry = new THREE.BufferGeometry();
         const positions = new Float32Array(dataPoints.length * 3);
         dataPoints.forEach((p, i) => {
             positions[i * 3] = p.x;
-            positions[i * 3 + 1] = p.y;
+            positions[i * 3 + 1] = p.y * scaleY;
             positions[i * 3 + 2] = 0;
         });
         pointsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -123,7 +195,7 @@ export function LinearRegressionScene({ color = '#4B286D' }: Props) {
 
         // Overfitting Curve (TubeGeometry for thickness)
         const sortedPoints = [...dataPoints].sort((a, b) => a.x - b.x);
-        const curveVectors = sortedPoints.map(p => new THREE.Vector3(p.x, p.y, 0));
+        const curveVectors = sortedPoints.map(p => new THREE.Vector3(p.x, p.y * scaleY, 0));
         const curve = new THREE.CatmullRomCurve3(curveVectors, false, 'catmullrom', 0.5);
         // Tube: path, segments, radius, radialSegments, closed
         const tubeGeometry = new THREE.TubeGeometry(curve, 100, 0.05, 8, false);
@@ -174,12 +246,13 @@ export function LinearRegressionScene({ color = '#4B286D' }: Props) {
         if (!regressionLineRef.current || !errorLinesRef.current || !pointsMeshRef.current || !overfitLineRef.current) return;
 
         // Constants
-        const lineXStart = -6;
-        const lineXEnd = 6;
+        const lineXStart = 0;
+        const lineXEnd = 12;
+        const scaleY = 0.5;
 
         // Update Regression Line (Mesh Transform)
-        const yStart = slope * lineXStart + intercept;
-        const yEnd = slope * lineXEnd + intercept;
+        const yStart = (slope * lineXStart + intercept) * scaleY;
+        const yEnd = (slope * lineXEnd + intercept) * scaleY;
 
         const startVec = new THREE.Vector3(lineXStart, yStart, 0);
         const endVec = new THREE.Vector3(lineXEnd, yEnd, 0);
@@ -205,12 +278,12 @@ export function LinearRegressionScene({ color = '#4B286D' }: Props) {
 
             // Start (Data)
             errPos[i * 6] = p.x;
-            errPos[i * 6 + 1] = p.y;
+            errPos[i * 6 + 1] = p.y * scaleY;
             errPos[i * 6 + 2] = 0;
 
             // End (Line)
             errPos[i * 6 + 3] = p.x;
-            errPos[i * 6 + 4] = predictedY;
+            errPos[i * 6 + 4] = predictedY * scaleY;
             errPos[i * 6 + 5] = 0;
 
             const error = p.y - predictedY;

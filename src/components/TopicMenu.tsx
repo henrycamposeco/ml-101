@@ -54,7 +54,7 @@ export function TopicMenu({ topics, onSelectTopic }: MenuProps) {
                     WebkitTextFillColor: 'transparent',
                     letterSpacing: '-2px'
                 }}>
-                    Interactive Learning
+                    Machine Learning
                 </h1>
                 <p className="fade-in" style={{
                     fontSize: '1.25rem',
@@ -62,7 +62,7 @@ export function TopicMenu({ topics, onSelectTopic }: MenuProps) {
                     marginBottom: 'var(--space-xl)',
                     maxWidth: '600px'
                 }}>
-                    Explore complex concepts through interactive visualizations and curated content.
+                    Explore machine learning basic concepts.
                 </p>
 
                 <div className="grid-layout" style={{

@@ -81,7 +81,7 @@ export const topics: Topic[] = [
                           <div style="background: rgba(255,0,0,0.1); padding: 10px; border-left: 4px solid red; margin-top: 10px;">
                              <p><strong>Goal:</strong> "Lower the Number". Minimize the cost as much as possible.</p>
                           </div>`,
-                config: { animationType: 'linear-regression', color: '#FF4757' }
+                config: { animationType: 'linear-regression', color: '#4B286D' }
             },
             {
                 id: 'lr-gradient-descent',
@@ -105,8 +105,9 @@ export const topics: Topic[] = [
                              <li>Clean messy data with <strong>Pandas</strong>.</li>
                              <li>Build/Train Linear Regression with <strong>Scikit-Learn</strong>.</li>
                           </ol>
+                          <a href="https://colab.research.google.com/drive/12HdIA245yaQ28uG_QNGyZB-Ih0pQ0LXO" target="_blank">Google Colab Notebook LAB </a>
                           <p style="margin-top: 20px; font-size: 1.2em; font-weight: bold; color: #66CC00;">We're going to watch the machine learn!</p>`,
-                config: { animationType: 'grid', color: '#66CC00', speed: 0.5 }
+                config: { animationType: 'particles', color: '#4B286D', speed: 0.5 }
             }
         ]
     },
